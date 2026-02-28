@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:17-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=strontium_admin
+      - POSTGRES_PASSWORD=strontium_pass
+      - POSTGRES_DB=trello_copy_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5435:5432"
+
+  backend:
+    build: 
+      context: ./backend
+    restart: always
+    ports:
+      - "8003:8000"
+    environment:
+      - DATABASE_URL=postgresql://strontium_admin:strontium_pass@db:5432/trello_copy_db
+      - SECRET_KEY=strontium_neural_link_secret_key_🐌
+      - CORS_ORIGINS=http://localhost:3003
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        - NEXT_PUBLIC_API_URL=http://localhost:8003/api/v1
+    restart: always
+    ports:
+      - "3003:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8003/api/v1
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
