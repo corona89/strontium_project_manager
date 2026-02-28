@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Lock, Mail, Loader2, Sparkles, ShieldCheck } from 'lucide-react';
+import { Lock, Mail, Loader2, Sparkles, ShieldCheck, ChevronRight, CheckCircle2 } from 'lucide-react';
 import api from '@/lib/api';
 
 export default function LoginPage() {
@@ -54,84 +54,109 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#09090b] text-[#fafafa] flex flex-col items-center justify-center p-8">
-      <div className="p-8 bg-[#18181b] border border-[#27272a] rounded-[3rem] mb-10 shadow-2xl animate-pulse">
-        <Sparkles size={60} strokeWidth={1.5} />
+    <div className="min-h-screen bg-[#f9fafc] text-[#172b4d] flex flex-col items-center font-sans">
+      <div className="mt-20 mb-10 flex items-center gap-2">
+        <div className="w-8 h-8 bg-[#0052cc] rounded-md flex items-center justify-center">
+            <div className="w-4 h-4 bg-white rounded-sm rotate-45" />
+        </div>
+        <h1 className="text-[32px] font-black text-[#172b4d] tracking-tighter">STRONTIUM</h1>
       </div>
 
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold tracking-tighter mb-2">Trello Copy</h1>
-        <p className="text-zinc-500 text-sm">Secure Agile Neural Cluster v4.2.0</p>
-      </div>
+      <div className="w-full max-w-[400px] bg-white rounded-md p-10 pt-8 shadow-[0_8px_16px_-4px_rgba(9,30,66,0.25),0_0_0_1px_rgba(9,30,66,0.08)]">
+        <h2 className="text-center font-bold text-[#5e6c84] text-[16px] mb-8 leading-6">
+          {is2faRequired ? "Verification Required" : "Log in to continue"}
+        </h2>
 
-      <div className="w-full max-w-[400px] bg-[#18181b] border border-[#27272a] rounded-[2rem] p-10 shadow-2xl">
         {!is2faRequired ? (
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-[0.65rem] font-black text-zinc-500 uppercase tracking-widest ml-1">Identity</label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-4 text-zinc-700 w-[18px]" />
-                <input 
-                  type="email" 
-                  className="w-full bg-[#09090b] border border-[#27272a] rounded-2xl py-4 pl-12 pr-4 text-sm outline-none focus:border-white transition-colors"
-                  placeholder="USER@ARCHIVE.CORE"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div className="space-y-1">
+              <input 
+                type="email" 
+                className="w-full bg-[#fafbfc] border-2 border-[#dfe1e6] hover:bg-[#ebecf0] focus:bg-white focus:border-[#4c9aff] rounded-[3px] h-11 px-3 text-sm outline-none transition-all placeholder:text-[#8993a4]"
+                placeholder="Enter email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-[0.65rem] font-black text-zinc-500 uppercase tracking-widest ml-1">Access Cipher</label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-4 text-zinc-700 w-[18px]" />
-                <input 
-                  type="password" 
-                  className="w-full bg-[#09090b] border border-[#27272a] rounded-2xl py-4 pl-12 pr-4 text-sm outline-none focus:border-white transition-colors"
-                  placeholder="••••••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
+            <div className="space-y-1">
+              <input 
+                type="password" 
+                className="w-full bg-[#fafbfc] border-2 border-[#dfe1e6] hover:bg-[#ebecf0] focus:bg-white focus:border-[#4c9aff] rounded-[3px] h-11 px-3 text-sm outline-none transition-all placeholder:text-[#8993a4]"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
             </div>
 
             <button 
               type="submit" 
               disabled={isLoading}
-              className="w-full h-14 bg-white text-black rounded-2xl font-black text-sm flex items-center justify-center gap-3 hover:bg-zinc-200 transition-all active:scale-[0.98]"
+              className="w-full h-10 bg-[#0052cc] hover:bg-[#0065ff] text-white rounded-[3px] font-bold text-sm flex items-center justify-center gap-3 transition-colors active:scale-[0.98] disabled:opacity-50"
             >
-              {isLoading ? <Loader2 className="animate-spin w-5" /> : "INITIALIZE SESSION"}
+              {isLoading ? <Loader2 className="animate-spin w-5" /> : "Log in"}
+            </button>
+            <div className="text-center pt-2">
+                <span className="text-[14px] text-[#5e6c84]">OR</span>
+            </div>
+            <button className="w-full h-10 bg-white border border-[#dfe1e6] hover:bg-[#ebecf0] rounded-[3px] text-sm font-bold text-[#172b4d] flex items-center justify-center gap-3 transition-colors">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_Core_Icon.svg" className="w-4 h-4" />
+                Continue with Google
             </button>
           </form>
         ) : (
           <form onSubmit={handle2FAVerify} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-[0.65rem] font-black text-zinc-500 uppercase tracking-widest ml-1">Multi-Factor Auth</label>
-              <div className="relative">
-                <ShieldCheck className="absolute left-4 top-4 text-zinc-700 w-[18px]" />
-                <input 
+               <div className="bg-emerald-50 text-emerald-700 p-4 rounded-md text-xs flex items-center gap-2 mb-4">
+                  <CheckCircle2 size={16} /> 2FA secret verified. Please enter code.
+               </div>
+               <input 
                   type="text" 
-                  className="w-full bg-[#09090b] border border-[#27272a] rounded-2xl py-4 pl-12 pr-4 text-sm outline-none focus:border-white tracking-[0.5em] text-center"
-                  placeholder="000 000"
+                  className="w-full bg-[#fafbfc] border-2 border-[#dfe1e6] focus:border-[#4c9aff] rounded-[3px] h-12 px-3 text-center text-xl font-bold tracking-[0.4em] outline-none transition-all"
+                  placeholder="000000"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
                   required
                 />
-              </div>
             </div>
 
             <button 
               type="submit" 
               disabled={isLoading}
-              className="w-full h-14 bg-emerald-500 text-white rounded-2xl font-black text-sm flex items-center justify-center gap-3 hover:bg-emerald-400 transition-all active:scale-[0.98]"
+              className="w-full h-10 bg-[#0052cc] hover:bg-[#0065ff] text-white rounded-[3px] font-bold text-sm flex items-center justify-center gap-3 transition-colors active:scale-[0.98]"
             >
-              {isLoading ? <Loader2 className="animate-spin w-5" /> : "VERIFY CODE"}
+              {isLoading ? <Loader2 className="animate-spin w-5" /> : "Verify and Log in"}
             </button>
           </form>
         )}
+        
+        <div className="mt-8 pt-6 border-t border-[#dfe1e6] flex flex-wrap justify-center gap-4 text-[12px] text-[#5e6c84]">
+           <a href="#" className="hover:underline">Can't log in?</a>
+           <span className="text-[#dfe1e6]">•</span>
+           <a href="#" className="hover:underline">Create an account</a>
+        </div>
+      </div>
+
+      <div className="mt-14 flex flex-col items-center gap-8">
+          <div className="flex gap-6 text-[12px] text-[#5e6c84] font-medium">
+             <a href="#" className="hover:underline">Templates</a>
+             <a href="#" className="hover:underline">Pricing</a>
+             <a href="#" className="hover:underline">Apps</a>
+             <a href="#" className="hover:underline">Jobs</a>
+             <a href="#" className="hover:underline">Privacy Policy</a>
+          </div>
+          <p className="text-[12px] text-[#5e6c84] flex items-center gap-1.5 opacity-60">
+             <Layout size={12} /> Powered by Strontium Neural Systems
+          </p>
       </div>
     </div>
   );
+}
+
+function Layout(props: any) {
+    return (
+      <svg {...props} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    );
 }
