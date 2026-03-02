@@ -2,7 +2,10 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Lock, Mail, Loader2, Sparkles, ShieldCheck, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { Lock, Mail, Loader2, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import api from '@/lib/api';
 
 export default function LoginPage() {
@@ -54,109 +57,117 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f9fafc] text-[#172b4d] flex flex-col items-center font-sans">
-      <div className="mt-20 mb-10 flex items-center gap-2">
-        <div className="w-8 h-8 bg-[#0052cc] rounded-md flex items-center justify-center">
-            <div className="w-4 h-4 bg-white rounded-sm rotate-45" />
-        </div>
-        <h1 className="text-[32px] font-black text-[#172b4d] tracking-tighter">STRONTIUM</h1>
+    <div className="min-h-screen bg-[#f9fafc] text-[#172b4d] flex flex-col items-center font-sans py-20">
+      <div className="mb-10 flex items-center gap-2">
+          <div className="w-8 h-8 bg-[#0052cc] rounded-md flex items-center justify-center">
+              <div className="w-4 h-4 bg-white rounded-sm rotate-45" />
+          </div>
+          <h1 className="text-[32px] font-black text-[#172b4d] tracking-tighter">STRONTIUM</h1>
       </div>
 
-      <div className="w-full max-w-[400px] bg-white rounded-md p-10 pt-8 shadow-[0_8px_16px_-4px_rgba(9,30,66,0.25),0_0_0_1px_rgba(9,30,66,0.08)]">
-        <h2 className="text-center font-bold text-[#5e6c84] text-[16px] mb-8 leading-6">
-          {is2faRequired ? "Verification Required" : "Log in to continue"}
-        </h2>
+      <Card className="w-full max-w-[400px] shadow-lg border-[#dfe1e6]">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-center text-[#5e6c84]">
+            {is2faRequired ? "Verification Required" : "Log in to continue"}
+          </CardTitle>
+          <CardDescription className="text-center text-[#172b4d]">
+            {is2faRequired ? "Please enter your 2FA code" : "Enter your credentials to access your account"}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {!is2faRequired ? (
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-2">
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-[#8993a4]" />
+                  <Input 
+                    type="email" 
+                    className="pl-9 bg-[#fafbfc] border-[#dfe1e6] hover:bg-[#ebecf0] focus:border-[#4c9aff]"
+                    placeholder="Enter email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
 
-        {!is2faRequired ? (
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-1">
-              <input 
-                type="email" 
-                className="w-full bg-[#fafbfc] border-2 border-[#dfe1e6] hover:bg-[#ebecf0] focus:bg-white focus:border-[#4c9aff] rounded-[3px] h-11 px-3 text-sm outline-none transition-all placeholder:text-[#8993a4]"
-                placeholder="Enter email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
+              <div className="space-y-2">
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-[#8993a4]" />
+                  <Input 
+                    type="password" 
+                    className="pl-9 bg-[#fafbfc] border-[#dfe1e6] hover:bg-[#ebecf0] focus:border-[#4c9aff]"
+                    placeholder="Enter password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
 
-            <div className="space-y-1">
-              <input 
-                type="password" 
-                className="w-full bg-[#fafbfc] border-2 border-[#dfe1e6] hover:bg-[#ebecf0] focus:bg-white focus:border-[#4c9aff] rounded-[3px] h-11 px-3 text-sm outline-none transition-all placeholder:text-[#8993a4]"
-                placeholder="Enter password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-
-            <button 
-              type="submit" 
-              disabled={isLoading}
-              className="w-full h-10 bg-[#0052cc] hover:bg-[#0065ff] text-white rounded-[3px] font-bold text-sm flex items-center justify-center gap-3 transition-colors active:scale-[0.98] disabled:opacity-50"
-            >
-              {isLoading ? <Loader2 className="animate-spin w-5" /> : "Log in"}
-            </button>
-            <div className="text-center pt-2">
-                <span className="text-[14px] text-[#5e6c84]">OR</span>
-            </div>
-            <button className="w-full h-10 bg-white border border-[#dfe1e6] hover:bg-[#ebecf0] rounded-[3px] text-sm font-bold text-[#172b4d] flex items-center justify-center gap-3 transition-colors">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_Core_Icon.svg" className="w-4 h-4" />
+              <Button 
+                type="submit" 
+                disabled={isLoading}
+                className="w-full bg-[#0052cc] hover:bg-[#0065ff]"
+              >
+                {isLoading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : "Log in"}
+              </Button>
+              
+              <div className="flex items-center gap-2 py-2">
+                <div className="h-px bg-[#dfe1e6] flex-1" />
+                <span className="text-xs text-[#5e6c84]">OR</span>
+                <div className="h-px bg-[#dfe1e6] flex-1" />
+              </div>
+              
+              <Button variant="outline" className="w-full border-[#dfe1e6] hover:bg-[#ebecf0]">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_Core_Icon.svg" className="mr-2 h-4 w-4" alt="Google" />
                 Continue with Google
-            </button>
-          </form>
-        ) : (
-          <form onSubmit={handle2FAVerify} className="space-y-6">
-            <div className="space-y-2">
-               <div className="bg-emerald-50 text-emerald-700 p-4 rounded-md text-xs flex items-center gap-2 mb-4">
-                  <CheckCircle2 size={16} /> 2FA secret verified. Please enter code.
-               </div>
-               <input 
-                  type="text" 
-                  className="w-full bg-[#fafbfc] border-2 border-[#dfe1e6] focus:border-[#4c9aff] rounded-[3px] h-12 px-3 text-center text-xl font-bold tracking-[0.4em] outline-none transition-all"
-                  placeholder="000000"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  required
-                />
-            </div>
+              </Button>
+            </form>
+          ) : (
+            <form onSubmit={handle2FAVerify} className="space-y-6">
+              <div className="space-y-2">
+                 <div className="bg-emerald-50 text-emerald-700 p-4 rounded-md text-xs flex items-center gap-2 mb-4 border border-emerald-200">
+                    <CheckCircle2 size={16} /> 2FA secret verified. Please enter code.
+                 </div>
+                 <Input 
+                    type="text" 
+                    className="bg-[#fafbfc] border-[#dfe1e6] focus:border-[#4c9aff] text-center tracking-[0.4em] text-xl font-bold"
+                    placeholder="000000"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    required
+                  />
+              </div>
 
-            <button 
-              type="submit" 
-              disabled={isLoading}
-              className="w-full h-10 bg-[#0052cc] hover:bg-[#0065ff] text-white rounded-[3px] font-bold text-sm flex items-center justify-center gap-3 transition-colors active:scale-[0.98]"
-            >
-              {isLoading ? <Loader2 className="animate-spin w-5" /> : "Verify and Log in"}
-            </button>
-          </form>
-        )}
-        
-        <div className="mt-8 pt-6 border-t border-[#dfe1e6] flex flex-wrap justify-center gap-4 text-[12px] text-[#5e6c84]">
-           <a href="#" className="hover:underline">Can't log in?</a>
-           <span className="text-[#dfe1e6]">•</span>
-           <a href="#" className="hover:underline">Create an account</a>
-        </div>
-      </div>
+              <Button 
+                type="submit" 
+                disabled={isLoading}
+                className="w-full bg-[#0052cc] hover:bg-[#0065ff]"
+              >
+                {isLoading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : "Verify and Log in"}
+              </Button>
+            </form>
+          )}
+        </CardContent>
+        <CardFooter className="flex flex-col gap-4 border-t pt-6">
+           <div className="flex flex-wrap justify-center gap-4 text-xs text-[#5e6c84] font-medium">
+              <a href="#" className="hover:underline">Can't log in?</a>
+              <span className="text-[#dfe1e6]">•</span>
+              <a href="#" className="hover:underline">Create an account</a>
+           </div>
+        </CardFooter>
+      </Card>
 
-      <div className="mt-14 flex flex-col items-center gap-8">
-          <div className="flex gap-6 text-[12px] text-[#5e6c84] font-medium">
+      <div className="mt-10 flex flex-col items-center gap-4">
+          <div className="flex gap-6 text-xs text-[#5e6c84] font-medium">
              <a href="#" className="hover:underline">Templates</a>
              <a href="#" className="hover:underline">Pricing</a>
              <a href="#" className="hover:underline">Apps</a>
              <a href="#" className="hover:underline">Jobs</a>
              <a href="#" className="hover:underline">Privacy Policy</a>
           </div>
-          <p className="text-[12px] text-[#5e6c84] flex items-center gap-1.5 opacity-60">
-             <Layout size={12} /> Powered by Strontium Neural Systems
-          </p>
       </div>
     </div>
   );
-}
-
-function Layout(props: any) {
-    return (
-      <svg {...props} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-    );
 }

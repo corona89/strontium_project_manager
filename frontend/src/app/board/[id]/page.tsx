@@ -1,22 +1,21 @@
 'use client';
 
-import React, { useEffect, useState, use } from 'react';
+import React, { useEffect, useState } from 'react';
+import { use } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
-  Loader2, 
   Plus, 
   MoreHorizontal, 
-  Calendar, 
   MessageSquare, 
   Paperclip,
-  User,
   Search,
   ChevronLeft,
   Layout,
   Settings,
   Bell,
   CheckCircle2,
-  Clock
+  Clock,
+  LayoutGrid
 } from 'lucide-react';
 import {
   DndContext,
@@ -36,9 +35,13 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
 import api from '@/lib/api';
 
-// --- Sortable Card Item Component ---
 function SortableCard({ card }: { card: any }) {
   const {
     attributes,
@@ -88,16 +91,15 @@ function SortableCard({ card }: { card: any }) {
         <div className="flex items-center gap-2 opacity-60">
           <MessageSquare size={13} />
           <Paperclip size={13} />
-          <div className="w-5 h-5 rounded-full bg-indigo-500 flex items-center justify-center text-[10px] font-bold text-white uppercase leading-none">
-            LA
-          </div>
+          <Avatar className="h-5 w-5 bg-indigo-500">
+            <AvatarFallback className="text-[10px] font-bold bg-indigo-500 uppercase leading-none">LA</AvatarFallback>
+          </Avatar>
         </div>
       </div>
     </div>
   );
 }
 
-// --- List Container Component ---
 function DroppableList({ list, cards, onAddCard }: { list: any; cards: any[]; onAddCard: (id: string) => void }) {
   const {
     setNodeRef,
@@ -111,9 +113,9 @@ function DroppableList({ list, cards, onAddCard }: { list: any; cards: any[]; on
     >
       <div className="flex items-center justify-between p-3 pl-4">
         <h3 className="text-[14px] font-bold text-[#b6c2cf]">{list.title}</h3>
-        <button className="text-[#9fadbc] hover:bg-[#a6c5e229] p-1.5 rounded-lg transition-colors">
+        <Button variant="ghost" className="text-[#9fadbc] hover:bg-[#a6c5e229] h-8 w-8 p-0">
           <MoreHorizontal size={16} />
-        </button>
+        </Button>
       </div>
       
       <div className="flex-1 overflow-y-auto px-2 space-y-2 py-1 custom-scrollbar min-h-[10px]">
@@ -125,18 +127,18 @@ function DroppableList({ list, cards, onAddCard }: { list: any; cards: any[]; on
       </div>
 
       <div className="px-2 mt-2">
-        <button 
+        <Button 
           onClick={() => onAddCard(list.id)}
-          className="w-full h-8 flex items-center gap-2 px-3 rounded-lg text-[14px] text-[#9fadbc] hover:bg-[#a6c5e229] hover:text-[#b6c2cf] transition-all font-medium"
+          variant="ghost"
+          className="w-full h-8 flex items-center gap-2 px-3 hover:bg-[#a6c5e229] hover:text-[#b6c2cf]"
         >
-          <Plus size={16} /> Add a card
-        </button>
+          <Plus size={16} className="h-4 w-4" /> Add a card
+        </Button>
       </div>
     </div>
   );
 }
 
-// --- Main Board Component ---
 export default function BoardPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: boardId } = use(params);
   const [board, setBoard] = useState<any>(null);
@@ -179,7 +181,6 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
     const activeData = active.data.current;
     const overData = over.data.current;
 
-    // Moving card between lists
     if (activeData?.type === 'Card' && (overData?.type === 'List' || overData?.type === 'Card')) {
       const overListId = overData.type === 'List' ? over.id : overData.card.list_id;
       const activeListId = activeData.card.list_id;
@@ -190,7 +191,7 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
           const movingCard = activeList.cards.find((c: any) => c.id === active.id);
           if (!movingCard) return prev;
           
-          movingCard.list_id = overListId; // Logic update
+          movingCard.list_id = overListId;
 
           return {
             ...prev,
@@ -239,13 +240,12 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
 
   if (isLoading || !board) return (
     <div className="min-h-screen bg-[#09090b] flex items-center justify-center">
-      <Loader2 className="animate-spin text-zinc-500" />
+      <div className="animate-spin h-8 w-8 border-4 border-zinc-500 border-t-transparent rounded-full" />
     </div>
   );
 
   return (
     <div className="h-screen flex flex-col bg-[#1d2125] text-[#b6c2cf] font-sans selection:bg-[#0055cc] selection:text-white">
-       {/* Global Top Nav */}
        <header className="h-[48px] border-b border-[#384148] px-4 flex items-center justify-between bg-[#1d2125]/90 backdrop-blur-sm z-[100] shrink-0">
           <div className="flex items-center gap-4">
              <div className="hover:bg-[#a6c5e229] p-1.5 rounded transition-colors cursor-pointer">
@@ -254,63 +254,68 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
              <h1 className="text-[18px] font-black tracking-tight text-[#b6c2cf] hover:text-white cursor-pointer transition-colors">STRONTIUM</h1>
              
              <div className="flex items-center gap-1 ml-4 hidden md:flex">
-                <button 
-                  onClick={() => router.push('/workspaces')}
-                  className="flex items-center gap-1.5 px-3 py-1 rounded bg-[#0055cc] hover:bg-[#0747a6] text-white font-bold text-xs"
-                >
-                  Create
-                </button>
-                <div className="flex items-center gap-1 px-3 py-1 rounded hover:bg-[#a6c5e229] text-[#9fadbc] text-xs font-semibold cursor-pointer">
+                <Button className="bg-[#0055cc] hover:bg-[#0747a6]">
+                  <Plus size={14} className="mr-1 h-3 w-3" /> Create
+                </Button>
+                <Button variant="ghost" className="bg-[#a6c5e229]">
                   Recent <MoreHorizontal size={14} className="mt-0.5" />
-                </div>
+                </Button>
              </div>
           </div>
 
           <div className="flex items-center gap-2">
              <div className="relative hidden sm:block">
                 <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#9fadbc]" />
-                <input 
+                <Input 
                   type="text" 
                   placeholder="Search" 
-                  className="bg-[#22272b] border border-[#384148] rounded-md h-8 pl-8 pr-4 text-xs focus:bg-[#1d2125] focus:border-[#0055cc] focus:ring-1 focus:ring-[#0055cc] transition-all outline-none w-[200px]"
+                  className="bg-[#22272b] border-[#384148] h-8 pl-8 w-[200px] text-sm"
                 />
              </div>
              <div className="flex items-center gap-1">
-                <button className="p-2 text-[#9fadbc] hover:bg-[#a6c5e229] rounded-full transition-colors"><Bell size={18} /></button>
-                <button className="p-2 text-[#9fadbc] hover:bg-[#a6c5e229] rounded-full transition-colors"><Settings size={18} /></button>
-                <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center font-bold text-sm text-white ml-2 ring-2 ring-transparent hover:ring-[#b6c2cf] cursor-pointer transition-all">LA</div>
+                <Button variant="ghost" className="p-2 text-[#9fadbc] hover:bg-[#a6c5e229]"><Bell size={18} /></Button>
+                <Button variant="ghost" className="p-2 text-[#9fadbc] hover:bg-[#a6c5e229]"><Settings size={18} /></Button>
+                <Avatar className="h-8 w-8 bg-indigo-600">
+                  <AvatarFallback className="font-bold text-sm bg-indigo-600">LA</AvatarFallback>
+                </Avatar>
              </div>
           </div>
        </header>
 
-       {/* Board Sub-Nav */}
        <div className="h-[56px] px-4 flex items-center justify-between bg-[#1d2125]/40 backdrop-blur-sm border-b border-[#384148]/50 shrink-0">
           <div className="flex items-center gap-2">
-             <button 
+             <Button 
+               variant="ghost" 
                onClick={() => router.push('/workspaces')}
-               className="p-1.5 hover:bg-[#a6c5e229] rounded transition-colors text-[#9fadbc]"
+               className="p-1.5 hover:bg-[#a6c5e229] text-[#9fadbc]"
              >
                 <ChevronLeft size={20} />
-             </button>
+             </Button>
              <h2 className="text-[18px] font-bold text-white px-3 py-1.5 hover:bg-[#a6c5e229] rounded cursor-pointer transition-colors">{board.title}</h2>
              
              <div className="flex items-center gap-1 ml-2">
-                <button className="p-2 text-[#9fadbc] hover:bg-[#a6c5e229] rounded transition-colors"><CheckCircle2 size={16} /></button>
-                <div className="px-3 py-1 hover:bg-[#a6c5e229] rounded text-[12px] font-bold text-[#b6c2cf] flex items-center gap-1.5 cursor-pointer">
-                   <LayoutGrid size={14} /> Board
-                </div>
+                <Button variant="ghost" size="sm" className="p-2 text-[#9fadbc] hover:bg-[#a6c5e229]"><CheckCircle2 size={16} /></Button>
+                <Button variant="ghost" size="sm" className="text-[#b6c2cf] px-3">
+                  <LayoutGrid size={14} className="mr-1 h-3 w-3" /> Board
+                </Button>
              </div>
           </div>
 
           <div className="flex items-center gap-2">
              <div className="flex -space-x-1.5 mr-2">
-                <div className="w-7 h-7 rounded-full bg-emerald-600 ring-2 ring-[#1d2125] flex items-center justify-center text-[10px] font-bold">JD</div>
-                <div className="w-7 h-7 rounded-full bg-amber-600 ring-2 ring-[#1d2125] flex items-center justify-center text-[10px] font-bold">MK</div>
-                <div className="w-7 h-7 rounded-full bg-rose-600 ring-2 ring-[#1d2125] flex items-center justify-center text-[10px] font-bold">SH</div>
+                <Avatar className="h-7 w-7 bg-emerald-600 ring-2 ring-[#1d2125]">
+                  <AvatarFallback className="text-[10px] font-bold bg-emerald-600 uppercase">JD</AvatarFallback>
+                </Avatar>
+                <Avatar className="h-7 w-7 bg-amber-600 ring-2 ring-[#1d2125]">
+                  <AvatarFallback className="text-[10px] font-bold bg-amber-600 uppercase">MK</AvatarFallback>
+                </Avatar>
+                <Avatar className="h-7 w-7 bg-rose-600 ring-2 ring-[#1d2125]">
+                  <AvatarFallback className="text-[10px] font-bold bg-rose-600 uppercase">SH</AvatarFallback>
+                </Avatar>
              </div>
-             <button className="bg-[#dfe1e6] hover:bg-[#ebecf0] text-[#172b4d] px-3 py-1.5 rounded font-bold text-xs transition-colors flex items-center gap-2">
-                <Plus size={14} /> Share
-             </button>
+             <Button variant="outline" className="bg-[#dfe1e6] hover:bg-[#ebecf0] text-[#172b4d] border-[#dfe1e6] hover:border-[#ebecf0]">
+                <Plus size={14} className="mr-1 h-3 w-3" /> Share
+             </Button>
           </div>
        </div>
 
@@ -321,40 +326,43 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
          onDragOver={handleDragOver}
          onDragEnd={handleDragEnd}
        >
-         <main 
-            className="flex-1 overflow-x-auto overflow-y-hidden p-3 flex gap-4 items-start scrollbar-thin select-none"
-            style={{ 
-               backgroundColor: board.background || '#1d2125',
-               backgroundImage: 'linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1))',
-            }}
-          >
-            <SortableContext items={board.lists.map((l: any) => l.id)}>
-              {board.lists.map((list: any) => (
-                <DroppableList 
-                  key={list.id} 
-                  list={list} 
-                  cards={list.cards} 
-                  onAddCard={handleAddCard}
-                />
-              ))}
-            </SortableContext>
+          <main 
+             className="flex-1 overflow-x-auto overflow-y-hidden p-3 flex gap-4 items-start scrollbar-thin select-none"
+             style={{ 
+                backgroundColor: board.background || '#1d2125',
+                backgroundImage: 'linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1))',
+             }}
+           >
+             <SortableContext items={board.lists.map((l: any) => l.id)}>
+               {board.lists.map((list: any) => (
+                 <DroppableList 
+                   key={list.id} 
+                   list={list} 
+                   cards={list.cards} 
+                   onAddCard={handleAddCard}
+                 />
+               ))}
+             </SortableContext>
 
-            <button className="w-[272px] shrink-0 h-10 bg-[#ffffff3d] hover:bg-[#ffffff52] backdrop-blur-md rounded-xl flex items-center gap-2 px-4 text-white text-[14px] font-bold transition-all shadow-sm">
-               <Plus size={18} /> Add another list
-            </button>
-         </main>
+             <Button 
+               variant="outline" 
+               className="w-[272px] shrink-0 h-10 bg-[#ffffff3d] hover:bg-[#ffffff52] backdrop-blur-md text-white border-transparent hover:border-transparent shadow-sm"
+             >
+                <Plus size={18} className="mr-1 h-4 w-4" /> Add another list
+             </Button>
+          </main>
 
-         <DragOverlay>
-            {activeId ? (
-              <div className="bg-[#22272b] border border-[#454f59] rounded-lg p-3 shadow-2xl opacity-90 scale-105 rotate-3 pointer-events-none">
-                 <div className="h-2 w-10 rounded-full bg-indigo-500 mb-2" />
-                 <h4 className="text-[14px] text-[#b6c2cf] font-medium leading-[20px]">Moving Card...</h4>
-              </div>
-            ) : null}
-         </DragOverlay>
+          <DragOverlay>
+             {activeId ? (
+               <div className="bg-[#22272b] border border-[#454f59] rounded-lg p-3 shadow-2xl opacity-90 scale-105 rotate-3 pointer-events-none">
+                  <div className="h-2 w-10 rounded-full bg-indigo-500 mb-2" />
+                  <h4 className="text-[14px] text-[#b6c2cf] font-medium leading-[20px]">Moving Card...</h4>
+               </div>
+             ) : null}
+          </DragOverlay>
        </DndContext>
 
-       <style jsx global>{`
+       <style>{`
           .scrollbar-thin::-webkit-scrollbar { height: 12px; width: 12px; }
           .scrollbar-thin::-webkit-scrollbar-track { background: #00000021; }
           .scrollbar-thin::-webkit-scrollbar-thumb { background: #ffffff3d; border-radius: 6px; border: 3px solid transparent; background-clip: content-box; }
@@ -366,11 +374,5 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
           .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #ffffff29; }
        `}</style>
     </div>
-  );
-}
-
-function LayoutGrid(props: any) {
-  return (
-    <svg {...props} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
   );
 }
