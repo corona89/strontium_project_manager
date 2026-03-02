@@ -19,6 +19,8 @@ services:
     restart: always
     ports:
       - "8003:8000"
+    volumes:
+      - ./backend:/app
     environment:
       - DATABASE_URL=postgresql://strontium_admin:strontium_pass@db:5432/trello_copy_db
       - SECRET_KEY=strontium_neural_link_secret_key_🐌
