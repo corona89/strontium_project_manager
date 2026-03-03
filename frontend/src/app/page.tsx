@@ -57,20 +57,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f9fafc] text-[#172b4d] flex flex-col items-center font-sans py-20">
+    <div className="min-h-screen bg-background text-foreground flex flex-col items-center font-sans py-20">
       <div className="mb-10 flex items-center gap-2">
           <div className="w-8 h-8 bg-[#0052cc] rounded-md flex items-center justify-center">
               <div className="w-4 h-4 bg-white rounded-sm rotate-45" />
           </div>
-          <h1 className="text-[32px] font-black text-[#172b4d] tracking-tighter">STRONTIUM</h1>
+          <h1 className="text-[32px] font-black text-white tracking-tighter">STRONTIUM</h1>
       </div>
 
-      <Card className="w-full max-w-[400px] shadow-lg border-[#dfe1e6]">
+      <Card className="w-full max-w-[400px] shadow-lg border-[#384148] bg-[#22272b]">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-center text-[#5e6c84]">
+          <CardTitle className="text-center text-[#b6c2cf]">
             {is2faRequired ? "Verification Required" : "Log in to continue"}
           </CardTitle>
-          <CardDescription className="text-center text-[#172b4d]">
+          <CardDescription className="text-center text-[#9fadbc]">
             {is2faRequired ? "Please enter your 2FA code" : "Enter your credentials to access your account"}
           </CardDescription>
         </CardHeader>
@@ -82,7 +82,7 @@ export default function LoginPage() {
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-[#8993a4]" />
                   <Input 
                     type="email" 
-                    className="pl-9 bg-[#fafbfc] border-[#dfe1e6] hover:bg-[#ebecf0] focus:border-[#4c9aff]"
+                    className="pl-9 bg-[#1d2125] border-[#384148] text-white hover:bg-[#22272b] focus:border-[#4c9aff]"
                     placeholder="Enter email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -96,7 +96,7 @@ export default function LoginPage() {
                   <Lock className="absolute left-3 top-3 h-4 w-4 text-[#8993a4]" />
                   <Input 
                     type="password" 
-                    className="pl-9 bg-[#fafbfc] border-[#dfe1e6] hover:bg-[#ebecf0] focus:border-[#4c9aff]"
+                    className="pl-9 bg-[#1d2125] border-[#384148] text-white hover:bg-[#22272b] focus:border-[#4c9aff]"
                     placeholder="Enter password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -108,18 +108,18 @@ export default function LoginPage() {
               <Button 
                 type="submit" 
                 disabled={isLoading}
-                className="w-full bg-[#0052cc] hover:bg-[#0065ff]"
+                className="w-full bg-[#0052cc] hover:bg-[#0065ff] text-white font-bold"
               >
                 {isLoading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : "Log in"}
               </Button>
               
               <div className="flex items-center gap-2 py-2">
-                <div className="h-px bg-[#dfe1e6] flex-1" />
-                <span className="text-xs text-[#5e6c84]">OR</span>
-                <div className="h-px bg-[#dfe1e6] flex-1" />
+                <div className="h-px bg-[#384148] flex-1" />
+                <span className="text-xs text-[#9fadbc]">OR</span>
+                <div className="h-px bg-[#384148] flex-1" />
               </div>
               
-              <Button variant="outline" className="w-full border-[#dfe1e6] hover:bg-[#ebecf0]">
+              <Button variant="outline" className="w-full border-[#384148] text-[#b6c2cf] bg-[#1d2125] hover:bg-[#22272b] hover:text-white">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_Core_Icon.svg" className="mr-2 h-4 w-4" alt="Google" />
                 Continue with Google
               </Button>
@@ -127,12 +127,12 @@ export default function LoginPage() {
           ) : (
             <form onSubmit={handle2FAVerify} className="space-y-6">
               <div className="space-y-2">
-                 <div className="bg-emerald-50 text-emerald-700 p-4 rounded-md text-xs flex items-center gap-2 mb-4 border border-emerald-200">
+                 <div className="bg-emerald-950/30 text-emerald-400 p-4 rounded-md text-xs flex items-center gap-2 mb-4 border border-emerald-900/50">
                     <CheckCircle2 size={16} /> 2FA secret verified. Please enter code.
                  </div>
                  <Input 
                     type="text" 
-                    className="bg-[#fafbfc] border-[#dfe1e6] focus:border-[#4c9aff] text-center tracking-[0.4em] text-xl font-bold"
+                    className="bg-[#1d2125] border-[#384148] text-white focus:border-[#4c9aff] text-center tracking-[0.4em] text-xl font-bold"
                     placeholder="000000"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
@@ -143,17 +143,17 @@ export default function LoginPage() {
               <Button 
                 type="submit" 
                 disabled={isLoading}
-                className="w-full bg-[#0052cc] hover:bg-[#0065ff]"
+                className="w-full bg-[#0052cc] hover:bg-[#0065ff] text-white font-bold"
               >
                 {isLoading ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : "Verify and Log in"}
               </Button>
             </form>
           )}
         </CardContent>
-        <CardFooter className="flex flex-col gap-4 border-t pt-6">
-           <div className="flex flex-wrap justify-center gap-4 text-xs text-[#5e6c84] font-medium">
+        <CardFooter className="flex flex-col gap-4 border-t border-[#384148] pt-6">
+           <div className="flex flex-wrap justify-center gap-4 text-xs text-[#9fadbc] font-medium">
               <a href="#" className="hover:underline">Can't log in?</a>
-              <span className="text-[#dfe1e6]">•</span>
+              <span className="text-[#384148]">•</span>
               <a href="#" className="hover:underline">Create an account</a>
            </div>
         </CardFooter>
